@@ -8,7 +8,7 @@ namespace GuildlandsTree.App
         private MenuStrip menuMain;
         private ToolStripMenuItem mnuArchivo, mnuSalir, mnuAyuda, mnuComoUsarlo, mnuAcercaDe;
         private Panel pnlLeft, pnlCampos, pnlBotones, pnlRight, pnlEnlace, pnlArbol;
-        private Button btnGo, btnCancel, btnEval, btnCopy;
+        private Button btnGo, btnCancel, btnEval, btnCopy, btnAbrir;
         private Label lblEnlaceIn, lblEnlaceOut, lblStatus;
         private TextBox txtUrlIn, txtUrlOut;
         private TabControl tabMain;
@@ -114,7 +114,7 @@ namespace GuildlandsTree.App
             menuMain.SuspendLayout();
             pnlLeft = new Panel(); pnlCampos = new Panel(); pnlBotones = new Panel();
             pnlRight = new Panel(); pnlEnlace = new Panel(); pnlArbol = new Panel();
-            btnGo = new Button(); btnCancel = new Button(); btnEval = new Button(); btnCopy = new Button();
+            btnGo = new Button(); btnCancel = new Button(); btnEval = new Button(); btnCopy = new Button(); btnAbrir = new Button();
             lblEnlaceIn = new Label(); lblEnlaceOut = new Label(); lblStatus = new Label();
             txtUrlIn = new TextBox(); txtUrlOut = new TextBox();
             tabMain = new TabControl(); tabArbol = new TabPage(); tabResumen = new TabPage(); tabNodos = new TabPage();
@@ -1152,12 +1152,21 @@ namespace GuildlandsTree.App
             // 
             // btnCopy
             // 
-            btnCopy.Location = new Point(126, 54);
+            btnCopy.Location = new Point(188, 142);
             btnCopy.Name = "btnCopy";
             btnCopy.Size = new Size(110, 30);
             btnCopy.Text = "Copiar enlace";
             btnCopy.UseVisualStyleBackColor = true;
             btnCopy.Click += btnCopy_Click;
+            // 
+            // btnAbrir
+            // 
+            btnAbrir.Location = new Point(8, 142);
+            btnAbrir.Name = "btnAbrir";
+            btnAbrir.Size = new Size(170, 30);
+            btnAbrir.Text = "Abrir en el navegador";
+            btnAbrir.UseVisualStyleBackColor = true;
+            btnAbrir.Click += btnAbrir_Click;
             // 
             // lblEnlaceOut
             // 
@@ -1180,11 +1189,12 @@ namespace GuildlandsTree.App
             pnlEnlace.Controls.Add(txtUrlIn);
             pnlEnlace.Controls.Add(btnEval);
             pnlEnlace.Controls.Add(btnCopy);
+            pnlEnlace.Controls.Add(btnAbrir);
             pnlEnlace.Controls.Add(lblEnlaceOut);
             pnlEnlace.Controls.Add(txtUrlOut);
             pnlEnlace.Dock = DockStyle.Top;
             pnlEnlace.Name = "pnlEnlace";
-            pnlEnlace.Size = new Size(840, 146);
+            pnlEnlace.Size = new Size(840, 182);
             // 
             // pnlArbol  (aquí se inserta el dibujo del árbol, TreeCanvas, al arrancar)
             // 
@@ -1286,7 +1296,7 @@ namespace GuildlandsTree.App
             // 
             mnuComoUsarlo.Name = "mnuComoUsarlo";
             mnuComoUsarlo.ShortcutKeys = Keys.F1;
-            mnuComoUsarlo.Text = "Cómo usarlo";
+            mnuComoUsarlo.Text = "Manual";
             mnuComoUsarlo.Click += mnuComoUsarlo_Click;
             // 
             // mnuAcercaDe

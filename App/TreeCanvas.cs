@@ -481,6 +481,28 @@ public sealed class TreeCanvas : Control
         "socket" or "bigsocket" => "Nexo", "mstart" => "Maestría", _ => "Pasiva"
     };
 
+    /// <summary>Dibuja una imagen como marco 9-slice: esquinas de 'slice' px escaladas ×scale, bordes estirados, centro de color liso.</summary>
+    static void NineSlice(Graphics g, Bitmap img, Rectangle d, int slice, int scale)
+    {
+        var oi = g.InterpolationMode; var op = g.PixelOffsetMode;
+        g.InterpolationMode = InterpolationMode.NearestNeighbor; g.PixelOffsetMode = PixelOffsetMode.Half;
+        int w = img.Width, h = img.Height, c = slice * scale;
+        var cen = img.GetPixel(w / 2 - 6, h / 2 + 6);
+        using (var b = new SolidBrush(cen)) g.FillRectangle(b, d.X + c, d.Y + c, d.Width - 2 * c, d.Height - 2 * c);
+        void P(int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh) =>
+            g.DrawImage(img, new Rectangle(dx, dy, dw, dh), sx, sy, sw, sh, GraphicsUnit.Pixel);
+        int mw = w - 2 * slice, mh = h - 2 * slice;
+        P(0, 0, slice, slice, d.X, d.Y, c, c);
+        P(w - slice, 0, slice, slice, d.Right - c, d.Y, c, c);
+        P(0, h - slice, slice, slice, d.X, d.Bottom - c, c, c);
+        P(w - slice, h - slice, slice, slice, d.Right - c, d.Bottom - c, c, c);
+        P(slice, 0, mw, slice, d.X + c, d.Y, d.Width - 2 * c, c);
+        P(slice, h - slice, mw, slice, d.X + c, d.Bottom - c, d.Width - 2 * c, c);
+        P(0, slice, slice, mh, d.X, d.Y + c, c, d.Height - 2 * c);
+        P(w - slice, slice, slice, mh, d.Right - c, d.Y + c, c, d.Height - 2 * c);
+        g.InterpolationMode = oi; g.PixelOffsetMode = op;
+    }
+
     void DrawCartel(Graphics g)
     {
         var raw = _tooltip(_hover); if (string.IsNullOrEmpty(raw) || !_byId.TryGetValue(_hover, out var n)) return;
@@ -492,7 +514,7 @@ public sealed class TreeCanvas : Control
         using var fTitle = _ffTitulo != null ? new Font(_ffTitulo, 15f, FontStyle.Regular, GraphicsUnit.Pixel) : new Font("Segoe UI", 12f, FontStyle.Bold, GraphicsUnit.Pixel);
         using var fTipo = _ffTipo != null ? new Font(_ffTipo, 10f, FontStyle.Bold, GraphicsUnit.Pixel) : new Font("Segoe UI", 10.5f, FontStyle.Bold, GraphicsUnit.Pixel);
         using var fBody = new Font("Segoe UI", 12f, FontStyle.Regular, GraphicsUnit.Pixel);
-        const int pad = 12, icon = 40, w = 300;
+        const int pad = 16, icon = 40, w = 310;
         int textW = w - 2 * pad;
         var bs = g.MeasureString(body, fBody, textW);
         int h = (int)(pad + icon + 8 + 1 + 8 + bs.Height + pad);
@@ -503,12 +525,13 @@ public sealed class TreeCanvas : Control
         var r = new Rectangle(x, y, w, h);
 
         using (var sh = new SolidBrush(Color.FromArgb(90, 0, 0, 0))) g.FillRectangle(sh, r.X + 4, r.Y + 5, r.Width, r.Height);
-        using (var br = new LinearGradientBrush(r, Pergamino, PergaminoOsc, 90f)) g.FillRectangle(br, r);
-        using (var p = new Pen(Marco, 3)) g.DrawRectangle(p, r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3);
-        using (var p = new Pen(Color.FromArgb(150, Cobre), 1)) g.DrawRectangle(p, r.X + 4, r.Y + 4, r.Width - 9, r.Height - 9);
-        using (var cb = new SolidBrush(Cobre))                       // remaches de cobre en las esquinas
-            foreach (var (cx, cy) in new[] { (r.Left, r.Top), (r.Right - 7, r.Top), (r.Left, r.Bottom - 7), (r.Right - 7, r.Bottom - 7) })
-                g.FillRectangle(cb, cx, cy, 7, 7);
+        var frame = Img("ui/frames/parchment-small.png");   // 48x48: marco de 6 px con remaches de cobre (9-slice)
+        if (frame != null) NineSlice(g, frame, r, 6, 2);
+        else
+        {
+            using (var br = new LinearGradientBrush(r, Pergamino, PergaminoOsc, 90f)) g.FillRectangle(br, r);
+            using (var p = new Pen(Marco, 3)) g.DrawRectangle(p, r.X + 1, r.Y + 1, r.Width - 3, r.Height - 3);
+        }
 
         // icono enmarcado
         var ir = new Rectangle(r.X + pad, r.Y + pad, icon, icon);

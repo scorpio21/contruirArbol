@@ -97,23 +97,19 @@ public partial class MainForm : Form
     void btnCancel_Click(object? sender, EventArgs e) => _cts?.Cancel();
     void btnEval_Click(object? sender, EventArgs e) => EvaluateLink();
     void mnuSalir_Click(object? sender, EventArgs e) => Close();
-    void mnuComoUsarlo_Click(object? sender, EventArgs e) => MessageBox.Show(
-        "GENERAR UN ÁRBOL (cualquier clase)\n" +
-        "1. Elige raza, clase, nivel, mazmorras y los puntos repartidos (FUE/AGI/INT/CAR/VIT).\n" +
-        "2. Rellena la SUMA de lo que dan tus piezas (atributos, daño, vida, % armadura...).\n" +
-        "3. Ajusta los pesos: son suposiciones tuyas sobre qué vale más. «Pesos por defecto» los restablece según la clase.\n" +
-        "4. Pulsa «Generar árbol». El resultado aparece en la pestaña Árbol y el enlace se copia con «Copiar enlace».\n\n" +
-        "EVALUAR UN ENLACE\n" +
-        "Pega un enlace del planificador arriba y pulsa «Evaluar enlace»: carga raza, clase, nivel y reparto, comprueba si es válido y lo dibuja.\n\n" +
-        "ÁRBOL: arrastra para mover, rueda para zoom, doble clic para ajustar, ratón encima de un nodo para ver su efecto.\n\n" +
-        "LÍMITES: las cifras de daño incluyen un factor ×1,14 que se observa en el juego y cuyo origen no conozco. " +
-        "Los efectos condicionales (contra bichos con poca vida, armas concretas, auras...) no se valoran.",
-        "Cómo usarlo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    void mnuComoUsarlo_Click(object? sender, EventArgs e) { using var f = new ManualForm(); f.ShowDialog(this); }
     void mnuAcercaDe_Click(object? sender, EventArgs e) => MessageBox.Show(
         "Guildlands · Optimizador del árbol de pasivas\n" +
         $"Datos del árbol: versión {_tree.Meta.Version} ({_tree.Nodes.Count} nodos), {ClassData.Current.Classes.Count} clases\n" +
         "Herramienta no oficial. Las ponderaciones del score son suposiciones editables, no datos del juego.",
         "Acerca de", MessageBoxButtons.OK, MessageBoxIcon.Information);
+    void btnAbrir_Click(object? sender, EventArgs e)
+    {
+        var url = txtUrlOut.Text.Trim();
+        if (url.Length == 0) { MessageBox.Show("Todavía no hay enlace generado. Pulsa «Generar árbol» o «Evaluar enlace» primero."); return; }
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch (Exception ex) { MessageBox.Show("No pude abrir el navegador: " + ex.Message); }
+    }
     void btnCopy_Click(object? sender, EventArgs e) { if (txtUrlOut.Text.Length > 0) Clipboard.SetText(txtUrlOut.Text); }
 
     void CheckAlloc()
