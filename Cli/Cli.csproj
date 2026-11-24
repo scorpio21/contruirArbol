@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <None Include="..\guildlands_classes.json" Link="guildlands_classes.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\guildlands_tree_v5.json" Link="guildlands_tree_v5.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

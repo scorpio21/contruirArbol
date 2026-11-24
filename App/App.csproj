@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>GuildlandsTree.App</RootNamespace>
+    <AssemblyName>GuildlandsTreeOptimizer</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <None Include="..\guildlands_classes.json" Link="guildlands_classes.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\guildlands_render.json" Link="guildlands_render.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\guildlands_tree_v5.json" Link="guildlands_tree_v5.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

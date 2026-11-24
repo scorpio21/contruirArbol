@@ -1,0 +1,1 @@
+(se crea con: dotnet new sln -n GuildlandsTreeOptimizer && dotnet sln add Core/Core.csproj Cli/Cli.csproj App/App.csproj)

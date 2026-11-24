@@ -1,0 +1,615 @@
+{
+ "classes": {
+  "warrior": {
+   "name": "Guerrero",
+   "role": "Resistencia y daño físico",
+   "attributes": {
+    "strength": 14,
+    "agility": 6,
+    "intelligence": 4,
+    "charisma": 3,
+    "stamina": 7
+   },
+   "focus": [
+    "strength"
+   ]
+  },
+  "paladin": {
+   "name": "Paladín",
+   "role": "Defensa y sanación",
+   "attributes": {
+    "strength": 10,
+    "agility": 4,
+    "intelligence": 6,
+    "charisma": 6,
+    "stamina": 8
+   },
+   "focus": [
+    "strength",
+    "stamina"
+   ]
+  },
+  "rogue": {
+   "name": "Pícaro",
+   "role": "Crítico y evasión",
+   "attributes": {
+    "strength": 5,
+    "agility": 14,
+    "intelligence": 5,
+    "charisma": 4,
+    "stamina": 6
+   },
+   "focus": [
+    "agility"
+   ]
+  },
+  "bandit": {
+   "name": "Bandido",
+   "role": "Daño rápido y oro",
+   "attributes": {
+    "strength": 10,
+    "agility": 10,
+    "intelligence": 4,
+    "charisma": 5,
+    "stamina": 5
+   },
+   "focus": [
+    "strength",
+    "agility"
+   ]
+  },
+  "hunter": {
+   "name": "Cazador",
+   "role": "Distancia y precisión",
+   "attributes": {
+    "strength": 6,
+    "agility": 11,
+    "intelligence": 4,
+    "charisma": 3,
+    "stamina": 10
+   },
+   "focus": [
+    "agility",
+    "stamina"
+   ]
+  },
+  "cleric": {
+   "name": "Clérigo",
+   "role": "Sanación y palabra",
+   "attributes": {
+    "strength": 3,
+    "agility": 3,
+    "intelligence": 11,
+    "charisma": 9,
+    "stamina": 8
+   },
+   "focus": [
+    "intelligence",
+    "charisma"
+   ]
+  },
+  "druid": {
+   "name": "Druida",
+   "role": "Garras y magia de la naturaleza",
+   "attributes": {
+    "strength": 4,
+    "agility": 5,
+    "intelligence": 11,
+    "charisma": 5,
+    "stamina": 9
+   },
+   "focus": [
+    "intelligence",
+    "stamina"
+   ]
+  },
+  "wizard": {
+   "name": "Mago",
+   "role": "Daño mágico puro",
+   "attributes": {
+    "strength": 3,
+    "agility": 5,
+    "intelligence": 15,
+    "charisma": 3,
+    "stamina": 8
+   },
+   "focus": [
+    "intelligence"
+   ]
+  },
+  "necromancer": {
+   "name": "Nigromante",
+   "role": "Esbirros y huesos",
+   "attributes": {
+    "strength": 3,
+    "agility": 5,
+    "intelligence": 15,
+    "charisma": 3,
+    "stamina": 8
+   },
+   "focus": [
+    "intelligence"
+   ]
+  },
+  "artificer": {
+   "name": "Artificiero",
+   "role": "Frascos y pociones",
+   "attributes": {
+    "strength": 3,
+    "agility": 3,
+    "intelligence": 11,
+    "charisma": 9,
+    "stamina": 8
+   },
+   "focus": [
+    "intelligence",
+    "charisma"
+   ]
+  },
+  "apothecary": {
+   "name": "Boticario",
+   "role": "Frascos de apoyo",
+   "attributes": {
+    "strength": 3,
+    "agility": 10,
+    "intelligence": 12,
+    "charisma": 3,
+    "stamina": 6
+   },
+   "focus": [
+    "agility",
+    "intelligence"
+   ]
+  },
+  "bard": {
+   "name": "Bardo",
+   "role": "Carisma y versatilidad",
+   "attributes": {
+    "strength": 5,
+    "agility": 8,
+    "intelligence": 7,
+    "charisma": 11,
+    "stamina": 3
+   },
+   "focus": [
+    "charisma"
+   ]
+  },
+  "beastmaster": {
+   "name": "Señor de las Bestias",
+   "role": "Bestias y garra",
+   "attributes": {
+    "strength": 5,
+    "agility": 8,
+    "intelligence": 7,
+    "charisma": 11,
+    "stamina": 3
+   },
+   "focus": [
+    "charisma"
+   ]
+  },
+  "pirate": {
+   "name": "Pirata",
+   "role": "Abordaje y saqueo",
+   "attributes": {
+    "strength": 11,
+    "agility": 6,
+    "intelligence": 3,
+    "charisma": 9,
+    "stamina": 5
+   },
+   "focus": [
+    "strength",
+    "charisma"
+   ]
+  },
+  "guardian": {
+   "name": "Guardián",
+   "role": "Vitalidad pura",
+   "attributes": {
+    "strength": 6,
+    "agility": 5,
+    "intelligence": 4,
+    "charisma": 3,
+    "stamina": 16
+   },
+   "focus": [
+    "stamina"
+   ]
+  },
+  "avenger": {
+   "name": "Vengador",
+   "role": "Rencor y represalia",
+   "attributes": {
+    "strength": 6,
+    "agility": 5,
+    "intelligence": 4,
+    "charisma": 3,
+    "stamina": 16
+   },
+   "focus": [
+    "stamina"
+   ]
+  },
+  "crusader": {
+   "name": "Cruzado",
+   "role": "Golpe físico y mágico",
+   "attributes": {
+    "strength": 10,
+    "agility": 4,
+    "intelligence": 10,
+    "charisma": 6,
+    "stamina": 4
+   },
+   "focus": [
+    "strength",
+    "intelligence"
+   ]
+  },
+  "ranger": {
+   "name": "Guardabosques",
+   "role": "Arco y magia del bosque",
+   "attributes": {
+    "strength": 6,
+    "agility": 12,
+    "intelligence": 10,
+    "charisma": 2,
+    "stamina": 4
+   },
+   "focus": [
+    "agility",
+    "intelligence"
+   ]
+  },
+  "warlord": {
+   "name": "Caudillo",
+   "role": "Vitalidad y mando",
+   "attributes": {
+    "strength": 7,
+    "agility": 3,
+    "intelligence": 3,
+    "charisma": 9,
+    "stamina": 12
+   },
+   "focus": [
+    "charisma",
+    "stamina"
+   ]
+  },
+  "duelist": {
+   "name": "Duelista",
+   "role": "Esgrima y temple",
+   "attributes": {
+    "strength": 5,
+    "agility": 12,
+    "intelligence": 3,
+    "charisma": 9,
+    "stamina": 5
+   },
+   "focus": [
+    "agility",
+    "charisma"
+   ]
+  }
+ },
+ "perk": {
+  "warrior": {
+   "stat": "maxHp",
+   "pct": 10
+  },
+  "paladin": {
+   "stat": "armor",
+   "pct": 5
+  },
+  "rogue": {
+   "stat": "critChance",
+   "pct": 10
+  },
+  "bandit": {
+   "stat": "evasion",
+   "pct": 10
+  },
+  "hunter": {
+   "stat": "physicalDamage",
+   "pct": 10
+  },
+  "cleric": {
+   "stat": "manaRegen",
+   "pct": 10
+  },
+  "druid": {
+   "stat": "hpRegen",
+   "pct": 10
+  },
+  "wizard": {
+   "stat": "magicDamage",
+   "pct": 10
+  },
+  "beastmaster": {
+   "stat": "maxHp",
+   "pct": 10
+  },
+  "artificer": {
+   "stat": "manaRegen",
+   "pct": 10
+  },
+  "apothecary": {
+   "stat": "maxHp",
+   "pct": 10
+  },
+  "bard": {
+   "stat": "maxMana",
+   "pct": 10
+  },
+  "pirate": {
+   "stat": "critDamage",
+   "pct": 10
+  },
+  "guardian": {
+   "stat": "armor",
+   "pct": 5
+  },
+  "crusader": {
+   "stat": "physicalDamage",
+   "pct": 30
+  },
+  "ranger": {
+   "stat": "attackSpeed",
+   "pct": 10
+  },
+  "warlord": {
+   "stat": "maxHp",
+   "pct": 10
+  },
+  "duelist": {
+   "stat": "attackSpeed",
+   "pct": 10
+  }
+ },
+ "Ob": {
+  "bard": {
+   "magicDamage": 0.8,
+   "maxMana": 7,
+   "manaRegen": 0.045
+  },
+  "cleric": {
+   "magicDamage": 0.75,
+   "maxMana": 7,
+   "manaRegen": 0.045
+  },
+  "artificer": {
+   "magicDamage": 0.75,
+   "maxMana": 7,
+   "manaRegen": 0.045
+  },
+  "beastmaster": {
+   "physicalDamage": 0.65
+  },
+  "pirate": {
+   "physicalDamage": 0.75
+  },
+  "duelist": {
+   "physicalDamage": 0.55
+  },
+  "warlord": {
+   "physicalDamage": 0.45
+  }
+ },
+ "Nb": {
+  "guardian": {
+   "physicalDamage": 0.12
+  }
+ },
+ "Kb": {
+  "paladin": 0,
+  "guardian": 0.14,
+  "avenger": 0.12
+ },
+ "Fb": {
+  "wizard": {
+   "magicDamage": 0.3
+  },
+  "necromancer": {
+   "magicDamage": 0.3
+  }
+ },
+ "Vb": {
+  "rogue": {
+   "physicalDamage": 0.16
+  },
+  "hunter": {
+   "physicalDamage": 0.25
+  },
+  "ranger": {
+   "physicalDamage": 0.15
+  },
+  "apothecary": {
+   "magicDamage": 0.4,
+   "maxMana": 7,
+   "manaRegen": 0.045
+  }
+ },
+ "Mb": {
+  "hunter": 40
+ },
+ "passiveAdd": {
+  "block": "block",
+  "critChance": "crit",
+  "evasion": "evasion",
+  "elementalRes": "elementalRes",
+  "critDamage": "critDmgPct",
+  "healIncrease": "healDonePct",
+  "expBonus": "expPct",
+  "hpRegen": "hpRegen",
+  "manaCostPct": "spellCostPct",
+  "cooldownPct": "cdrPct",
+  "potionBonus": "potionPct",
+  "restBonus": "restPct",
+  "steadfast": "foeDebuffPct",
+  "vampirism": "vampPct"
+ },
+ "passiveMul": {
+  "physicalDamage": "physPct",
+  "magicDamage": "magicPct",
+  "maxHp": "hpPct",
+  "armor": "armorPct",
+  "maxMana": "manaPct",
+  "attackSpeed": "atkSpdPct",
+  "hpRegen": "hpRegenPct",
+  "manaRegen": "manaRegenPct",
+  "moveSpeed": "movePct",
+  "castSpeed": "castSpeedPct"
+ },
+ "attrCoef": {
+  "maxHp": {
+   "stamina": 6
+  },
+  "maxMana": {
+   "intelligence": 7
+  },
+  "physicalDamage": {
+   "strength": 0.7
+  },
+  "magicDamage": {
+   "intelligence": 0.6
+  },
+  "armor": {
+   "stamina": 0.4
+  },
+  "critChance": {
+   "agility": 0.5
+  },
+  "evasion": {
+   "agility": 0.3
+  },
+  "hpRegen": {
+   "stamina": 0.2
+  },
+  "manaRegen": {
+   "intelligence": 0.045
+  }
+ },
+ "base": {
+  "maxHp": 40,
+  "maxMana": 15,
+  "critDamage": 150,
+  "castSpeed": 100,
+  "manaCostPct": 0,
+  "cooldownPct": 0,
+  "rarity": 0,
+  "physicalDamage": 2,
+  "magicDamage": 2,
+  "armor": 0,
+  "critChance": 5,
+  "evasion": 0,
+  "attackSpeed": 100,
+  "moveSpeed": 100,
+  "hpRegen": 2,
+  "manaRegen": 1,
+  "block": 0,
+  "elementalRes": 0,
+  "healIncrease": 0,
+  "vampirism": 0,
+  "goldBonus": 0,
+  "expBonus": 0,
+  "potionBonus": 0,
+  "restBonus": 0,
+  "steadfast": 0
+ },
+ "perLevel": {
+  "maxHp": 4,
+  "maxMana": 2,
+  "armor": 1,
+  "manaRegen": 0.1
+ },
+ "caps": {
+  "potionBonus": 40,
+  "restBonus": 60,
+  "manaCostPct": 30,
+  "cooldownPct": 30,
+  "steadfast": 60,
+  "castSpeed": 120
+ },
+ "raceMod": {
+  "human": {
+   "strength": 0,
+   "agility": 0,
+   "intelligence": 0,
+   "charisma": 0,
+   "stamina": 0
+  },
+  "elf": {
+   "strength": -3,
+   "agility": 2,
+   "intelligence": 2,
+   "charisma": 2,
+   "stamina": -3
+  },
+  "drow": {
+   "strength": -1,
+   "agility": 3,
+   "intelligence": 2,
+   "charisma": -2,
+   "stamina": -2
+  },
+  "orc": {
+   "strength": 3,
+   "agility": -1,
+   "intelligence": -3,
+   "charisma": -2,
+   "stamina": 3
+  },
+  "dwarf": {
+   "strength": 2,
+   "agility": -2,
+   "intelligence": 0,
+   "charisma": -3,
+   "stamina": 3
+  },
+  "gnome": {
+   "strength": -3,
+   "agility": 0,
+   "intelligence": 3,
+   "charisma": 2,
+   "stamina": -2
+  }
+ },
+ "constants": {
+  "focus": 1.3,
+  "spread": 1.15,
+  "classHpPerLevelIfStrFocus": 5.4,
+  "atkSpdMax": 90,
+  "atkSpdK": 45,
+  "healMax": 40,
+  "healK": 100,
+  "globalDamageMult": 1.14
+ },
+ "stats": [
+  "maxHp",
+  "maxMana",
+  "hpRegen",
+  "manaRegen",
+  "physicalDamage",
+  "attackSpeed",
+  "critChance",
+  "critDamage",
+  "magicDamage",
+  "castSpeed",
+  "manaCostPct",
+  "cooldownPct",
+  "armor",
+  "evasion",
+  "moveSpeed",
+  "rarity",
+  "block",
+  "elementalRes",
+  "healIncrease",
+  "vampirism",
+  "goldBonus",
+  "expBonus",
+  "potionBonus",
+  "restBonus",
+  "steadfast"
+ ]
+}
