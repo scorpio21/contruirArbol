@@ -6,13 +6,17 @@ namespace GuildlandsTree.App
 
         private System.ComponentModel.IContainer components = null;
         private MenuStrip menuMain;
-        private ToolStripMenuItem mnuArchivo, mnuSalir, mnuAyuda, mnuComoUsarlo, mnuAcercaDe;
+        private ToolStripMenuItem mnuArchivo, mnuEjemplo, mnuSalir, mnuAyuda, mnuComoUsarlo, mnuAcercaDe;
         private Panel pnlLeft, pnlCampos, pnlBotones, pnlRight, pnlEnlace, pnlArbol;
         private Button btnGo, btnCancel, btnEval, btnCopy, btnAbrir;
         private Label lblEnlaceIn, lblEnlaceOut, lblStatus;
         private TextBox txtUrlIn, txtUrlOut;
         private TabControl tabMain;
-        private TabPage tabArbol, tabResumen, tabNodos;
+        private TabPage tabArbol, tabResumen, tabNodos, tabFicha;
+        private Microsoft.Web.WebView2.WinForms.WebView2 wvFicha;
+        private Panel pnlFicha;
+        private Button btnFichaAEquipo;
+        private Label lblFichaInfo;
         private RichTextBox rtb;
         private ListView lv;
         private ColumnHeader colId, colTipo, colNombre, colEfecto;
@@ -37,6 +41,7 @@ namespace GuildlandsTree.App
         private NumericUpDown nudVit;
         private Label lblAllocCheck;
         private Label lblSecEquipo;
+        private CheckBox chkEquipoFicha;
         private Label lblGFue;
         private NumericUpDown nudGFue;
         private Label lblGAgi;
@@ -109,7 +114,7 @@ namespace GuildlandsTree.App
         #region Windows Form Designer generated code
         private void InitializeComponent()
         {
-            menuMain = new MenuStrip(); mnuArchivo = new ToolStripMenuItem(); mnuSalir = new ToolStripMenuItem();
+            menuMain = new MenuStrip(); mnuArchivo = new ToolStripMenuItem(); mnuSalir = new ToolStripMenuItem(); mnuEjemplo = new ToolStripMenuItem();
             mnuAyuda = new ToolStripMenuItem(); mnuComoUsarlo = new ToolStripMenuItem(); mnuAcercaDe = new ToolStripMenuItem();
             menuMain.SuspendLayout();
             pnlLeft = new Panel(); pnlCampos = new Panel(); pnlBotones = new Panel();
@@ -117,7 +122,9 @@ namespace GuildlandsTree.App
             btnGo = new Button(); btnCancel = new Button(); btnEval = new Button(); btnCopy = new Button(); btnAbrir = new Button();
             lblEnlaceIn = new Label(); lblEnlaceOut = new Label(); lblStatus = new Label();
             txtUrlIn = new TextBox(); txtUrlOut = new TextBox();
-            tabMain = new TabControl(); tabArbol = new TabPage(); tabResumen = new TabPage(); tabNodos = new TabPage();
+            tabMain = new TabControl(); tabArbol = new TabPage(); tabResumen = new TabPage(); tabNodos = new TabPage(); tabFicha = new TabPage();
+            wvFicha = new Microsoft.Web.WebView2.WinForms.WebView2();
+            pnlFicha = new Panel(); btnFichaAEquipo = new Button(); lblFichaInfo = new Label();
             rtb = new RichTextBox(); lv = new ListView();
             colId = new ColumnHeader(); colTipo = new ColumnHeader(); colNombre = new ColumnHeader(); colEfecto = new ColumnHeader();
 
@@ -142,6 +149,7 @@ namespace GuildlandsTree.App
             nudVit = new NumericUpDown();
             lblAllocCheck = new Label();
             lblSecEquipo = new Label();
+            chkEquipoFicha = new CheckBox();
             lblGFue = new Label();
             nudGFue = new NumericUpDown();
             lblGAgi = new Label();
@@ -238,7 +246,8 @@ namespace GuildlandsTree.App
             ((System.ComponentModel.ISupportInitialize)nudTime).BeginInit();
             pnlLeft.SuspendLayout(); pnlCampos.SuspendLayout(); pnlBotones.SuspendLayout();
             pnlRight.SuspendLayout(); pnlEnlace.SuspendLayout(); tabMain.SuspendLayout();
-            tabArbol.SuspendLayout(); tabResumen.SuspendLayout(); tabNodos.SuspendLayout();
+            tabArbol.SuspendLayout(); tabResumen.SuspendLayout(); tabNodos.SuspendLayout(); tabFicha.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)wvFicha).BeginInit();
             SuspendLayout();
 
             // 
@@ -426,6 +435,17 @@ namespace GuildlandsTree.App
             lblSecEquipo.Size = new Size(100, 15);
             lblSecEquipo.TabIndex = 10;
             lblSecEquipo.Text = "Equipo (suma de todas tus piezas)";
+            // 
+            // chkEquipoFicha  (rellena el equipo solo desde la ficha del personaje)
+            // 
+            chkEquipoFicha.AutoSize = true;
+            chkEquipoFicha.Location = new Point(262, 336);
+            chkEquipoFicha.Name = "chkEquipoFicha";
+            chkEquipoFicha.Size = new Size(110, 19);
+            chkEquipoFicha.TabIndex = 9;
+            chkEquipoFicha.Text = "Auto (ficha)";
+            chkEquipoFicha.UseVisualStyleBackColor = true;
+            chkEquipoFicha.CheckedChanged += chkEquipoFicha_CheckedChanged;
             // 
             // lblGFue
             // 
@@ -1029,6 +1049,7 @@ namespace GuildlandsTree.App
             pnlCampos.Controls.Add(lblSecEquipo);
             pnlCampos.Controls.Add(lblGFue);
             pnlCampos.Controls.Add(nudGFue);
+            pnlCampos.Controls.Add(chkEquipoFicha);
             pnlCampos.Controls.Add(lblGAgi);
             pnlCampos.Controls.Add(nudGAgi);
             pnlCampos.Controls.Add(lblGInt);
@@ -1246,6 +1267,44 @@ namespace GuildlandsTree.App
             tabMain.Controls.Add(tabArbol);
             tabMain.Controls.Add(tabResumen);
             tabMain.Controls.Add(tabNodos);
+            tabMain.Controls.Add(tabFicha);
+            // 
+            // wvFicha  (la ficha del juego se muestra con el HTML/CSS original: ficha.html)
+            // 
+            wvFicha.AllowExternalDrop = false;
+            wvFicha.BackColor = Color.FromArgb(20, 18, 15);
+            wvFicha.CreationProperties = null;
+            wvFicha.DefaultBackgroundColor = Color.FromArgb(20, 18, 15);
+            wvFicha.Dock = DockStyle.Fill;
+            wvFicha.Name = "wvFicha";
+            wvFicha.ZoomFactor = 1D;
+            wvFicha.SizeChanged += wvFicha_SizeChanged;
+            // 
+            // pnlFicha  (barra superior de la solapa: botón «Pasar a Equipo»)
+            // 
+            pnlFicha.Controls.Add(lblFichaInfo);
+            pnlFicha.Controls.Add(btnFichaAEquipo);
+            pnlFicha.Dock = DockStyle.Top;
+            pnlFicha.Height = 40;
+            pnlFicha.Name = "pnlFicha";
+            btnFichaAEquipo.Dock = DockStyle.Left;
+            btnFichaAEquipo.Name = "btnFichaAEquipo";
+            btnFichaAEquipo.Text = "Pasar a Equipo (generar con este personaje)";
+            btnFichaAEquipo.Width = 300;
+            btnFichaAEquipo.UseVisualStyleBackColor = true;
+            btnFichaAEquipo.Click += btnFichaAEquipo_Click;
+            lblFichaInfo.Dock = DockStyle.Fill;
+            lblFichaInfo.Name = "lblFichaInfo";
+            lblFichaInfo.Padding = new Padding(8, 0, 0, 0);
+            lblFichaInfo.TextAlign = ContentAlignment.MiddleLeft;
+            lblFichaInfo.Text = "Suma los objetos equipados (tooltips) y los atributos de la hoja, y los copia a la pestaña Equipo.";
+            // 
+            // tabFicha
+            // 
+            tabFicha.Controls.Add(wvFicha);
+            tabFicha.Controls.Add(pnlFicha);
+            tabFicha.Name = "tabFicha";
+            tabFicha.Text = "Ejemplo del personaje";
             tabMain.Dock = DockStyle.Fill;
             tabMain.Name = "tabMain";
             tabMain.SelectedIndex = 0;
@@ -1274,9 +1333,15 @@ namespace GuildlandsTree.App
             // 
             // mnuArchivo
             // 
-            mnuArchivo.DropDownItems.AddRange(new ToolStripItem[] { mnuSalir });
+            mnuArchivo.DropDownItems.AddRange(new ToolStripItem[] { mnuEjemplo, mnuSalir });
             mnuArchivo.Name = "mnuArchivo";
             mnuArchivo.Text = "&Archivo";
+            // 
+            // mnuEjemplo
+            // 
+            mnuEjemplo.Name = "mnuEjemplo";
+            mnuEjemplo.Text = "Cargar personaje de ejemplo (Scorpio)";
+            mnuEjemplo.Click += mnuEjemplo_Click;
             // 
             // mnuSalir
             // 
@@ -1319,6 +1384,7 @@ namespace GuildlandsTree.App
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Guildlands · Optimizador del árbol de pasivas";
             Load += MainForm_Load;
+            tabMain.SelectedIndexChanged += tabMain_SelectedIndexChanged;
             nudLevel.ValueChanged += nudAlloc_ValueChanged;
             ((System.ComponentModel.ISupportInitialize)nudLevel).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudDungeons).EndInit();
@@ -1359,7 +1425,8 @@ namespace GuildlandsTree.App
             ((System.ComponentModel.ISupportInitialize)nudTime).EndInit();
             pnlLeft.ResumeLayout(false); pnlCampos.ResumeLayout(false); pnlCampos.PerformLayout(); pnlBotones.ResumeLayout(false);
             pnlRight.ResumeLayout(false); pnlEnlace.ResumeLayout(false); pnlEnlace.PerformLayout(); tabMain.ResumeLayout(false);
-            tabArbol.ResumeLayout(false); tabResumen.ResumeLayout(false); tabNodos.ResumeLayout(false);
+            tabArbol.ResumeLayout(false); tabResumen.ResumeLayout(false); tabNodos.ResumeLayout(false); tabFicha.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)wvFicha).EndInit();
             menuMain.ResumeLayout(false);
             menuMain.PerformLayout();
             ResumeLayout(false);

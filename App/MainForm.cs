@@ -84,14 +84,197 @@ public partial class MainForm : Form
 
     // ---- eventos (enlazados desde el diseñador) ----
     void MainForm_Load(object? sender, EventArgs e) { }
+
+    /// <summary>Rellena todos los campos con el personaje de la solapa «Ejemplo»: Scorpio, paladín humano nivel 38.</summary>
+    void mnuEjemplo_Click(object? sender, EventArgs e)
+    {
+        _loading = true;
+        cmbRace.SelectedItem = "human"; SelectClass("paladin");
+        nudLevel.Value = 38; nudDungeons.Value = 5;
+        int[] reparto = { 45, 3, 0, 2, 24 };                 // FUE AGI INT CAR VIT puestos (suman 2·(38−1) = 74)
+        for (int i = 0; i < 5; i++) nudAlloc[i].Value = reparto[i];
+        int[] eq = { 5, 8, 5, 11, 5 };                       // atributos de equipo de la ficha (base + equipo)
+        for (int i = 0; i < 5; i++) nudGearAttr[i].Value = eq[i];
+        nudGPhys.Value = 38; nudGMagic.Value = 29; nudGMana.Value = 58; nudGHp.Value = 176;
+        nudGArmorPct.Value = 18; nudGDefPct.Value = 9; nudGCritPct.Value = 4;
+        _loading = false;
+        ApplyDefaultWeights();
+        PushFicha();
+        tabMain.SelectedTab = tabResumen;
+        MessageBox.Show("Cargado: Scorpio (Paladín humano, nivel 38, 5 mazmorras) con su equipo.\nPulsa «Generar árbol» para calcular el árbol.", "Personaje de ejemplo");
+    }
+
+    // ---- Solapa «Ejemplo del personaje»: ficha.html (HTML/CSS original del juego) dentro de un WebView2 ----
+    bool _fichaListo, _fichaIniciando;
+    const double FichaAncho = 1400, FichaAlto = 830;      // tamaño de referencia con el que se ve entera
+
+    void tabMain_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (tabMain.SelectedTab == tabFicha && !_fichaListo && !_fichaIniciando) _ = IniciarFichaAsync();
+    }
+
+    static string? BuscarRaizFicha()
+    {
+        for (var d = new DirectoryInfo(AppContext.BaseDirectory); d != null; d = d.Parent)
+            if (File.Exists(Path.Combine(d.FullName, "ficha.html")) && Directory.Exists(Path.Combine(d.FullName, "guildlands_assets")))
+                return d.FullName;
+        return null;
+    }
+
+    async Task IniciarFichaAsync()
+    {
+        _fichaIniciando = true;
+        try
+        {
+            var raiz = BuscarRaizFicha();
+            if (raiz == null)
+            {
+                MessageBox.Show("No encuentro 'ficha.html' junto a la carpeta 'guildlands_assets' (la busco subiendo desde el .exe).", "Ejemplo del personaje");
+                return;
+            }
+            var env = await Microsoft.Web.WebView2.Core.CoreWebView2Environment.CreateAsync(null, Path.Combine(Path.GetTempPath(), "GuildlandsTreeOptimizer_WebView2"));
+            await wvFicha.EnsureCoreWebView2Async(env);
+            var cw = wvFicha.CoreWebView2;
+            cw.SetVirtualHostNameToFolderMapping("guildlands.local", raiz, Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
+            cw.Settings.AreDefaultContextMenusEnabled = false;
+            cw.Settings.AreDevToolsEnabled = false;
+            cw.Settings.IsZoomControlEnabled = false;
+            cw.Settings.IsStatusBarEnabled = false;
+            cw.WebMessageReceived += cw_WebMessageReceived;
+            cw.NavigationCompleted += (_, _) => { PushFicha(); if (chkEquipoFicha.Checked) _ = RellenarDesdeFicha(false, true); };
+            cw.Navigate("https://guildlands.local/ficha.html");
+            _fichaListo = true;
+            AjustarZoomFicha();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("No se pudo iniciar el visor de la ficha (WebView2).\n\n" + ex.Message +
+                "\n\nInstala el «WebView2 Runtime» de Microsoft: https://go.microsoft.com/fwlink/p/?LinkId=2124703", "Ejemplo del personaje");
+        }
+        finally { _fichaIniciando = false; }
+    }
+
+    static string NombreRaza(string r) => r switch
+    {
+        "human" => "Humano", "elf" => "Elfo", "orc" => "Orco", "drow" => "Drow", "dwarf" => "Enano", "gnome" => "Gnomo", _ => r
+    };
+
+    bool _fichaSync;   // evita el bucle ficha → campos → ficha
+
+    /// <summary>App → ficha: base de clase/raza, puntos repartidos y nivel actuales.</summary>
+    void PushFicha()
+    {
+        if (!_fichaListo || _fichaSync || _loading || wvFicha.CoreWebView2 == null) return;
+        try
+        {
+            var bp = BuildParams(); var ba = GuildlandsTree.Core.StatModel.BaseAttrs(bp);
+            string js = string.Format(CultureInfo.InvariantCulture, "GLInit({{base:[{0}],alloc:[{1}],nivel:{2},clase:'{3}',raza:'{4}'}})",
+                string.Join(",", Enumerable.Range(0, 5).Select(i => (ba[i] - bp.Alloc[i]).ToString(CultureInfo.InvariantCulture))),
+                string.Join(",", bp.Alloc), (int)nudLevel.Value,
+                GuildlandsTree.Core.ClassData.Current.Classes[bp.Class].Name.Replace("'", ""), NombreRaza(bp.Race));
+            _ = wvFicha.CoreWebView2.ExecuteScriptAsync(js);
+        }
+        catch { /* combinación raza/clase aún sin elegir */ }
+    }
+
+    /// <summary>Ficha → app: al pulsar +/− en un atributo, los «Puntos repartidos» se actualizan solos.</summary>
+    void cw_WebMessageReceived(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(e.WebMessageAsJson);
+            if (doc.RootElement.TryGetProperty("equipo", out _))
+            {
+                if (chkEquipoFicha.Checked) _ = RellenarDesdeFicha(false, true);     // el equipo cambió en la ficha
+                return;
+            }
+            var arr = doc.RootElement.GetProperty("alloc");
+            _fichaSync = true;
+            int i = 0;
+            foreach (var x in arr.EnumerateArray())
+            {
+                if (i < 5) nudAlloc[i].Value = Math.Clamp(x.GetInt32(), (int)nudAlloc[i].Minimum, (int)nudAlloc[i].Maximum);
+                i++;
+            }
+        }
+        catch { }
+        finally { _fichaSync = false; }
+        CheckAlloc();
+    }
+
+    void btnFichaAEquipo_Click(object? sender, EventArgs e) => _ = RellenarDesdeFicha(true, false);
+
+    /// <summary>Lee la ficha (objetos + atributos) y rellena Equipo; con conAlloc también deduce el reparto de puntos.</summary>
+    async Task RellenarDesdeFicha(bool conAlloc, bool silencioso)
+    {
+        if (!_fichaListo || wvFicha.CoreWebView2 == null) { if (!silencioso) MessageBox.Show("La ficha aún no está cargada.", "Pasar a Equipo"); return; }
+        try
+        {
+            string raw = await wvFicha.CoreWebView2.ExecuteScriptAsync("JSON.stringify(window.GLEquipo())");
+            using var doc = System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.Deserialize<string>(raw)!);
+            var r = doc.RootElement; var a = r.GetProperty("attrs");
+            decimal D(System.Text.Json.JsonElement x, string n) => x.GetProperty(n).GetDecimal();
+            _loading = true;
+            // orden de los campos: FUE AGI INT CAR VIT
+            string[] k = { "fue", "agi", "int", "car", "vit" };
+            for (int i = 0; i < 5; i++) nudGearAttr[i].Value = Math.Clamp(D(a, k[i]), nudGearAttr[i].Minimum, nudGearAttr[i].Maximum);
+            nudGPhys.Value = Math.Clamp(D(r, "phys"), nudGPhys.Minimum, nudGPhys.Maximum);
+            nudGMagic.Value = Math.Clamp(D(r, "magic"), nudGMagic.Minimum, nudGMagic.Maximum);
+            nudGMana.Value = Math.Clamp(D(r, "mana"), nudGMana.Minimum, nudGMana.Maximum);
+            nudGHp.Value = Math.Clamp(D(r, "hp"), nudGHp.Minimum, nudGHp.Maximum);
+            nudGArmorPct.Value = Math.Clamp(D(r, "armorPct"), nudGArmorPct.Minimum, nudGArmorPct.Maximum);
+            nudGDefPct.Value = Math.Clamp(D(r, "defPct"), nudGDefPct.Minimum, nudGDefPct.Maximum);
+            nudGCritPct.Value = Math.Clamp(D(r, "critPct"), nudGCritPct.Minimum, nudGCritPct.Maximum);
+            // puntos repartidos = valor mostrado en la hoja − equipo − base de clase/raza
+            if (!conAlloc) { _loading = false; if (silencioso) return; }
+            var tot = r.GetProperty("tot");
+            var bp = BuildParams(); var ba = GuildlandsTree.Core.StatModel.BaseAttrs(bp);
+            var alloc = new int[5]; int sumA = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                double baseI = ba[i] - bp.Alloc[i];
+                alloc[i] = Math.Max(0, (int)Math.Round((double)D(tot, k[i]) - (double)D(a, k[i]) - baseI));
+                sumA += alloc[i];
+            }
+            for (int i = 0; i < 5; i++) nudAlloc[i].Value = Math.Clamp(alloc[i], (int)nudAlloc[i].Minimum, (int)nudAlloc[i].Maximum);
+            _loading = false;
+            CheckAlloc();
+            var av = new List<string>();
+            if (sumA != 2 * ((int)nudLevel.Value - 1)) av.Add($"• Reparto deducido = {sumA}, el juego espera {2 * ((int)nudLevel.Value - 1)}: comprueba que Raza, Clase y Nivel coinciden con la ficha.");
+            foreach (var x in r.GetProperty("avisos").EnumerateArray()) av.Add("• " + x.GetString());
+            if (D(r, "resPct") > 0) av.Add($"• Resistencia elemental +{D(r, "resPct")} %: el generador no la usa.");
+            if (!silencioso) MessageBox.Show("Cargados el reparto de puntos y el equipo de la ficha." +
+                (av.Count > 0 ? "\n\nAvisos:\n" + string.Join("\n", av) : ""), "Pasar a Equipo");
+        }
+        catch (Exception ex) { _loading = false; if (!silencioso) MessageBox.Show("No se pudo leer el equipo de la ficha.\n\n" + ex.Message, "Pasar a Equipo"); }
+    }
+
+    IEnumerable<NumericUpDown> CamposEquipo => nudGearAttr.Concat(new[] { nudGPhys, nudGMagic, nudGMana, nudGHp, nudGArmorPct, nudGDefPct, nudGCritPct });
+
+    void chkEquipoFicha_CheckedChanged(object? sender, EventArgs e)
+    {
+        foreach (var n in CamposEquipo) n.Enabled = !chkEquipoFicha.Checked;
+        if (!chkEquipoFicha.Checked) return;
+        if (_fichaListo) _ = RellenarDesdeFicha(false, true);
+        else tabMain.SelectedTab = tabFicha;               // al cargar la ficha se rellena sola (NavigationCompleted)
+    }
+
+    void wvFicha_SizeChanged(object? sender, EventArgs e) => AjustarZoomFicha();
+
+    void AjustarZoomFicha()
+    {
+        if (!_fichaListo || wvFicha.Width < 50 || wvFicha.Height < 50) return;
+        wvFicha.ZoomFactor = Math.Clamp(Math.Min(wvFicha.Width / FichaAncho, wvFicha.Height / FichaAlto), 0.3, 2.0);
+    }
     void nudAlloc_ValueChanged(object? sender, EventArgs e) => CheckAlloc();
     void cmbRace_SelectedIndexChanged(object? sender, EventArgs e)
     {
         bool gnome = (string?)cmbRace.SelectedItem == "gnome";
         chkForce.Enabled = gnome;
         if (!gnome) chkForce.Checked = false;
+        PushFicha();
     }
-    void cmbClass_SelectedIndexChanged(object? sender, EventArgs e) { if (!_loading) ApplyDefaultWeights(); }
+    void cmbClass_SelectedIndexChanged(object? sender, EventArgs e) { if (!_loading) ApplyDefaultWeights(); PushFicha(); }
     void btnPesos_Click(object? sender, EventArgs e) => ApplyDefaultWeights();
     async void btnGo_Click(object? sender, EventArgs e) => await GenerateAsync();
     void btnCancel_Click(object? sender, EventArgs e) => _cts?.Cancel();
@@ -117,6 +300,7 @@ public partial class MainForm : Form
         int sum = nudAlloc.Sum(n => (int)n.Value), expect = 2 * ((int)nudLevel.Value - 1);
         lblAllocCheck.Text = sum == expect ? $"Reparto: {sum} / {expect} ✓" : $"Reparto: {sum} / {expect} (el juego espera {expect})";
         lblAllocCheck.ForeColor = sum == expect ? Color.DarkGreen : Color.Firebrick;
+        PushFicha();
     }
 
     Params BuildParams()

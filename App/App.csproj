@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2592.51" />
     <None Include="..\guildlands_classes.json" Link="guildlands_classes.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\guildlands_render.json" Link="guildlands_render.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\guildlands_tree_v5.json" Link="guildlands_tree_v5.json" CopyToOutputDirectory="PreserveNewest" />
